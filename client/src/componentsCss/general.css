@@ -1,0 +1,73 @@
+/* ----------------------------
+        GENERAL ELEMENTS
+---------------------------- */
+button {
+    font-size: 20px;
+    border: none;
+    color: white;
+    background-color: #f44336;
+    margin-top: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    outline:none;
+    transition: all 100ms ease; 
+  }
+
+button:hover {
+  background-color: #2196f3;
+}
+
+h1, h2 {
+  font-family: 'Indie Flower', cursive;
+  text-align: center;
+  color: #1d1d1d;
+}
+
+/* ----------------------------
+           FORMS
+---------------------------- */
+  .box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .elements {
+    width: 250px;
+    /* max-width: 500px; */
+    font-size: 24px;
+  }
+  
+  .elements > * {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .elements > h1 {
+    margin: 10px 0px 10px 0px;
+  }
+
+  .elements > h2 {
+    margin: 20px 0px 5px 0px;
+  }
+
+  .elements > input {
+    box-sizing: border-box;
+    font-size: 20px;
+    padding: 5px;
+    border: 5px solid #f44336;
+    background-color: #fff;
+    border-width: 0 0 5px 0;
+    outline: none;
+    text-align: center;
+  } 
+
+  .return {
+    background-color: #656565;
+  }
+  
+  .return:hover {
+    background-color: #4a39ac;
+  }

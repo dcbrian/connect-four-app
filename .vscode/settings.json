@@ -1,0 +1,5 @@
+{
+  "git.ignoreLimitWarning": true,
+  "standard.autoFixOnSave": true,
+  "javascript.validate.enable": false,
+}
