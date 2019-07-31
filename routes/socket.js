@@ -9,10 +9,10 @@ module.exports = function (server, session) {
 
   // RECEIVE :: Client connecting to Socket.io
   io.sockets.on('connection', function (socket) {
-    // CREATES BUGS TO ASK ONCE FOR PSEUDO == RECEIVE :: Client asking to join a Socket.io Room
+    // Creates bugs to ask pseudo
+    // Instead send pseudo with every events
+    // RECEIVE :: Client asking to join a Socket.io Room
     // socket.on('pseudo', function (pseudo) {
-    //   console.log('pseudo is ' + pseudo)
-
     //   // Store in session
     //   socket.handshake.session.pseudo = pseudo
     //   socket.handshake.session.save()
@@ -32,7 +32,7 @@ module.exports = function (server, session) {
       }
 
       //  Fill Players / Online inside Socket.io Room
-      if (play) {
+      if (play && socketIoRoom.players.length < 2) {
         socketIoRoom.online.push(pseudo)
         socketIoRoom.players.push(pseudo)
       } else {
@@ -40,11 +40,13 @@ module.exports = function (server, session) {
       }
 
       if (socketIoRoom.players.length === 2) {
-        // EMIT :: Game starts
-        socket.emit('start', {
-          'players': io.sockets.adapter.rooms['ROOM' + room].players,
-          'start': Math.round(Math.random())
-        })
+        console.log('two players')
+        // EMIT To ROOM:: Game starts
+        io.in('ROOM' + room).emit('start',
+          // Array of players
+          io.sockets.adapter.rooms['ROOM' + room].players,
+          // Player who starts
+          io.sockets.adapter.rooms['ROOM' + room].players[Math.round(Math.random())])
       }
 
       // EMIT :: Room number
@@ -68,8 +70,8 @@ module.exports = function (server, session) {
     })
 
     // RECEIVE :: Client making a move on the board
-    socket.on('move', function (item) {
-
+    socket.on('move', function (room, item) {
+      socket.to('ROOM' + room).emit('move', item)
     })
 
     // RECEIVE :: Client asking for the List of Rooms as spectator
@@ -87,6 +89,7 @@ module.exports = function (server, session) {
       socket.emit('playRooms', Object.keys(io.sockets.adapter.rooms)
         .filter(name => name.includes('ROOM'))
         .filter(name => io.sockets.adapter.rooms[name].players.length < 2)
+        .map(name => name.replace('ROOM', ''))
       )
     })
 

@@ -1,0 +1,141 @@
+
+.chatbox {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 435px;
+    height: 25vh;
+  }
+
+/* ----------------------------
+	MESSAGES
+---------------------------- */
+
+.messages {
+    flex: 1 1 100%;
+    /*border: 5px solid red;*/
+    box-sizing: border-box;
+    align-self: flex-start;
+    /* max-height: calc(100vh - 310px); */
+    height: 100%;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .messages::-webkit-scrollbar {
+    width: 0.4em;
+  }
+  
+  .messages::-webkit-scrollbar-thumb {
+    background-color: #eceff1;
+  }
+  
+  /* ----------------------------
+      MESSAGE
+  ---------------------------- */
+  
+  .message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5px;
+  }
+  
+  .message > * {
+    padding: 5px 10px;
+    max-width: 75%;
+    border-radius: 2px;
+    margin: 10px 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+  
+  .not-user-message {
+    background-color: #f44336;
+    align-self: flex-start;
+    position: relative;
+    color: #fff;
+  }
+  
+  .not-user-message:after {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 10px;
+    width: 0;
+    border-width: 0 10px 7px 0;
+    border-style: solid;
+    border-color: #f44336 transparent;
+  }
+  
+  .user-message {
+    background-color: #2196f3;
+    color: #fff;
+    align-self: flex-end;
+    position: relative;
+  }
+  
+  .user-message:after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    right: 10px;
+    width: 0;
+    border-width: 7px 0 0 10px;
+    border-style: solid;
+    border-color: #2196f3 transparent;
+  }
+  
+
+/* ----------------------------
+	FORMULAIRE
+---------------------------- */
+
+.form {
+    align-self: flex-end;
+  }
+  
+  .form,
+  .form > * {
+    width: 100%;
+  }
+  
+  .form > button {
+    background-color: #2196f3;
+    margin-top: 2px;
+  }
+  
+  .form > input {
+    box-sizing: border-box;
+    height: 50px;
+    border: 5px solid #1a2125;
+    border-width: 0 0 5px 0;
+    /* background-color: #eceff1; */
+    outline: none;
+    font-size: 20px;
+    padding: 5px 10px;
+  }
+  
+  .info {
+    text-align: right;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  button:disabled {
+    background-color: #eceff1;
+    cursor: not-allowed;
+    color: white;
+  }
+  
+  ::-webkit-scrollbar-thumb:vertical {
+    height: 30px;
+    background-color: #2196f3;
+    }

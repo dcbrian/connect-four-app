@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import '../componentsCss/general.css'
 import '../componentsCss/game.css'
 import WithLoginControl from '../componentsHOC/WithLoginControl';
+import Chat from './Chat';
+import VisWithClass from './VisWithClass';
 
 class Game extends Component {
   constructor(props) {
@@ -10,8 +12,15 @@ class Game extends Component {
     this.state = {
       waiting: true,
       pseudo: localStorage.getItem('pseudo'),
+      // False if spectator
       play: this.props.location.state ? false : true,
+      // Players
+      players: null,
+      // Name of the player's turn
+      turn: null,
+      // Room number
       room: null,
+      // Actual URL of game
       game: this.props.match.params.game,
       socket: this.props.socket
     }
@@ -20,11 +29,6 @@ class Game extends Component {
   }
 
   componentDidMount () {
-    // console.log(this.props.location.state.type)
-    // if (this.props.type) {
-    //   this.setState({ type: this.props.type })
-    // }
-
     // EMIT :: Join a room
     this.props.socket.emit('join', this.state.game, this.state.play, this.state.pseudo)
 
@@ -33,6 +37,13 @@ class Game extends Component {
       this.setState({
         room: res
       })
+    })
+
+    // RECEIVE :: Two players are in the room - Game starts
+    this.props.socket.on('start', (players, starts) => {
+      let isTurn = this.state.pseudo === starts ? true : false
+      console.log(isTurn)
+      this.setState({ waiting: false, players: players, turn: isTurn })
     })
   }
 
@@ -54,6 +65,11 @@ class Game extends Component {
     this.props.history.push("/");
   }
 
+  // EMIT :: A player did a move
+  move = (box) => {
+    this.state.socket.emit('move', box, this.state.pseudo)
+  }
+
   render () {
     if (this.state.waiting) {
       return (
@@ -70,12 +86,7 @@ class Game extends Component {
       )
     } else {
       return (
-        <canvas
-          id='canvas'
-          ref={this.myRef}
-          width={(this.columns + 3) * this.size}
-          height={400}
-        />
+        <VisWithClass turn={this.state.turn} game={this.state.game} socket={this.props.socket}></VisWithClass>
       )
     }
   }

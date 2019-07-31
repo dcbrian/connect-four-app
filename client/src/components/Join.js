@@ -1,7 +1,6 @@
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import React, { Component } from 'react'
 import '../componentsCss/animation.css'
-import '../componentsCss/watch.css'
 import WithLoginControl from '../componentsHOC/WithLoginControl';
 
 class Join extends Component {

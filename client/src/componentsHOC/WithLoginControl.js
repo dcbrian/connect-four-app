@@ -28,10 +28,6 @@ const WithLoginControl = WrappedComponent => (
     handleSubmit = event => {
       event.preventDefault()
       localStorage.setItem('pseudo', this.state.pseudo);
-
-      // EMIT :: Save Pseudo to Server
-      this.props.socket.emit('pseudo', this.state.pseudo)
-
       this.setState({ redirectPseudo: true })
     }
 
