@@ -42,7 +42,6 @@ class Game extends Component {
     // RECEIVE :: Two players are in the room - Game starts
     this.props.socket.on('start', (players, starts) => {
       let isTurn = this.state.pseudo === starts ? true : false
-      console.log(isTurn)
       this.setState({ waiting: false, players: players, turn: isTurn })
     })
   }
