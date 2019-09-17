@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import WithLoginControl from '../componentsHOC/WithLoginControl';
+import WithLoginControl from '../../componentsHOC/WithLoginControl';
 
 class Lobby extends Component {
 

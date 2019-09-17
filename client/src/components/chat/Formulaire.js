@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { runInThisContext } from 'vm';
-import '../index.css'
-import '../componentsCss/chat.css'
-import '../componentsCss/animation.css'
+import '../../index.css'
+import '../../componentsCss/chat.css'
+import '../../componentsCss/animation.css'
 
 class Formulaire extends Component {
   constructor(props) {

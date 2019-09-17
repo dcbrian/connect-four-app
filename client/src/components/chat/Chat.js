@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import Message from './Message'
 import Formulaire from './Formulaire'
-import '../index.css'
-import '../componentsCss/chat.css'
-import '../componentsCss/animation.css'
+import '../../index.css'
+import '../../componentsCss/chat.css'
+import '../../componentsCss/animation.css'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 class Chat extends Component {

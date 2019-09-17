@@ -1,7 +1,7 @@
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import React, { Component } from 'react'
-import '../componentsCss/animation.css'
-import WithLoginControl from '../componentsHOC/WithLoginControl';
+import '../../componentsCss/animation.css'
+import WithLoginControl from '../../componentsHOC/WithLoginControl';
 
 class Join extends Component {
     constructor(props) {
@@ -9,24 +9,25 @@ class Join extends Component {
 
         this.state = {
             rooms: {},
-            socket: this.props.socket
+            socket: this.props.socket,
+            action: this.props.action,
         }
 
     }
     componentDidMount () {
         // EMIT :: List of Rooms
-        this.state.socket.emit('playRooms', {})
+        this.state.socket.emit(this.state.action, {})
 
-        // Create interval to see new roms
+        // Create interval to see new rooms
         let interval = setInterval(() => {
-            this.state.socket.emit('playRooms', {})
+            this.state.socket.emit(this.state.action, {})
         }, 5000);
 
         // Save interval to state to access it later
         this.setState({ interval: interval });
 
         // RECEIVE :: List of rooms
-        this.state.socket.on('playRooms', res => {
+        this.state.socket.on(this.state.action, res => {
             this.setState({
                 rooms: res
             })

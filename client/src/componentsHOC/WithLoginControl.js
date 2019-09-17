@@ -12,9 +12,8 @@ const WithLoginControl = WrappedComponent => (
     }
 
     componentDidMount () {
-
       // Initializing Pseudo if exists
-      let pseudo = localStorage.getItem('pseudo')
+      let pseudo = sessionStorage.getItem('pseudo')
 
       if (pseudo) {
         this.setState({
@@ -27,7 +26,7 @@ const WithLoginControl = WrappedComponent => (
     // Handle  Pseudo box's Submit
     handleSubmit = event => {
       event.preventDefault()
-      localStorage.setItem('pseudo', this.state.pseudo);
+      sessionStorage.setItem('pseudo', this.state.pseudo);
       this.setState({ redirectPseudo: true })
     }
 
@@ -56,7 +55,7 @@ const WithLoginControl = WrappedComponent => (
         )
       } else {
         return (
-          <WrappedComponent {...this.props} />
+          <WrappedComponent {...this.props} pseudo={this.state.pseudo} />
         )
       }
     }

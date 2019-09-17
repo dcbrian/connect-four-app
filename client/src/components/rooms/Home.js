@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import '../componentsCss/general.css'
-import WithLoginControl from '../componentsHOC/WithLoginControl'
+import '../../componentsCss/general.css'
+import WithLoginControl from '../../componentsHOC/WithLoginControl'
 
 class Home extends Component {
 

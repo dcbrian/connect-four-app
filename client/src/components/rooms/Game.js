@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react'
-import '../componentsCss/general.css'
-import '../componentsCss/game.css'
-import WithLoginControl from '../componentsHOC/WithLoginControl';
-import Chat from './Chat';
-import VisWithClass from './VisWithClass';
+import '../../componentsCss/general.css'
+import '../../componentsCss/game.css'
+import WithLoginControl from '../../componentsHOC/WithLoginControl';
+import Chat from '../chat/Chat';
+import Three from '../Three';
 
 class Game extends Component {
   constructor(props) {
@@ -11,7 +11,6 @@ class Game extends Component {
 
     this.state = {
       waiting: true,
-      pseudo: localStorage.getItem('pseudo'),
       // False if spectator
       play: this.props.location.state ? false : true,
       // Players
@@ -30,8 +29,7 @@ class Game extends Component {
 
   componentDidMount () {
     // EMIT :: Join a room
-    this.props.socket.emit('join', this.state.game, this.state.play, this.state.pseudo)
-
+    this.props.socket.emit('join', this.state.game, this.state.play, this.props.pseudo)
     // RECEIVE :: Room number
     this.state.socket.on('roomNumber', res => {
       this.setState({
@@ -39,16 +37,22 @@ class Game extends Component {
       })
     })
 
+    // RECEIVE :: Players have the same name - this client has to change
+    this.props.socket.on('duplicate', (name) => {
+      sessionStorage.setItem('pseudo', name);
+    })
+
     // RECEIVE :: Two players are in the room - Game starts
     this.props.socket.on('start', (players, starts) => {
-      let isTurn = this.state.pseudo === starts ? true : false
+      console.log('ok')
+      let isTurn = this.props.pseudo === starts ? true : false
       this.setState({ waiting: false, players: players, turn: isTurn })
     })
   }
 
   componentWillUnmount () {
     // EMIT :: Leave a room
-    this.props.socket.emit('leave', this.state.game, this.state.pseudo)
+    this.props.socket.emit('leave', this.state.game, this.props.pseudo)
   }
 
   // Copy the URL to ClipBoard
@@ -66,7 +70,7 @@ class Game extends Component {
 
   // EMIT :: A player did a move
   move = (box) => {
-    this.state.socket.emit('move', box, this.state.pseudo)
+    this.state.socket.emit('move', box, this.props.pseudo)
   }
 
   render () {
@@ -85,7 +89,7 @@ class Game extends Component {
       )
     } else {
       return (
-        <VisWithClass turn={this.state.turn} game={this.state.game} socket={this.props.socket}></VisWithClass>
+        <Three turn={this.state.turn} game={this.state.game} socket={this.props.socket}></Three>
       )
     }
   }

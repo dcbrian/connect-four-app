@@ -3,7 +3,7 @@ import React, { Fragment, Component } from 'react'
 import * as THREE from 'three'
 import '../index.css'
 
-class VisWithClass extends Component {
+class Three extends Component {
   componentDidMount () {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
@@ -232,4 +232,4 @@ class VisWithClass extends Component {
   }
 }
 
-export default VisWithClass
+export default Three

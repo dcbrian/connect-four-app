@@ -1,7 +1,7 @@
 import React from 'react'
-import '../index.css'
-import '../componentsCss/chat.css'
-import '../componentsCss/animation.css'
+import '../../index.css'
+import '../../componentsCss/chat.css'
+import '../../componentsCss/animation.css'
 
 const Message = ({ pseudo, message, isUser }) => {
   if (isUser(pseudo)) {
