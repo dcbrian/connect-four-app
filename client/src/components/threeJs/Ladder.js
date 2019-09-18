@@ -1,7 +1,7 @@
 import { TweenMax, TimelineMax, Expo } from "gsap/TweenMax"
 import React, { Fragment, Component } from 'react'
 import * as THREE from 'three'
-import '../../componentsCss/Three.css'
+import '../../componentsCss/three.css'
 import '../../index.css'
 
 class Ladder extends Component {
