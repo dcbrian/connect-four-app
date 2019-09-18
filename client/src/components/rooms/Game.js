@@ -3,7 +3,7 @@ import '../../componentsCss/general.css'
 import '../../componentsCss/game.css'
 import WithLoginControl from '../../componentsHOC/WithLoginControl';
 import Chat from '../chat/Chat';
-import Three from '../Three';
+import Board from '../threeJs/Board';
 
 class Game extends Component {
   constructor(props) {
@@ -44,10 +44,15 @@ class Game extends Component {
 
     // RECEIVE :: Two players are in the room - Game starts
     this.props.socket.on('start', (players, starts) => {
-      console.log('ok')
       let isTurn = this.props.pseudo === starts ? true : false
       this.setState({ waiting: false, players: players, turn: isTurn })
     })
+
+    window.addEventListener("beforeunload", (ev) => {
+      // EMIT :: Leave a room
+      this.props.socket.emit('leave', this.state.game, this.props.pseudo)
+      ev.preventDefault();
+    });
   }
 
   componentWillUnmount () {
@@ -89,7 +94,7 @@ class Game extends Component {
       )
     } else {
       return (
-        <Three turn={this.state.turn} game={this.state.game} socket={this.props.socket}></Three>
+        <Board turn={this.state.turn} game={this.state.game} socket={this.props.socket} pseudo={this.props.pseudo}></Board>
       )
     }
   }

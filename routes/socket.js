@@ -1,5 +1,6 @@
 const socket = require('socket.io')
 const sharedsession = require('express-socket.io-session')
+const logic = require('./board.js')
 
 module.exports = function (server, session) {
   const io = socket(server)
@@ -29,6 +30,7 @@ module.exports = function (server, session) {
       if (socketIoRoom.online === undefined) {
         socketIoRoom.online = []
         socketIoRoom.players = []
+        socketIoRoom.board = logic.create2DArray(7)
       }
 
       //  Fill Players / Online inside Socket.io Room
@@ -37,7 +39,6 @@ module.exports = function (server, session) {
           pseudo = pseudo + '2'
           socket.emit('duplicate', pseudo)
         }
-
         socketIoRoom.online.push(pseudo)
         socketIoRoom.players.push(pseudo)
       } else {
@@ -45,38 +46,46 @@ module.exports = function (server, session) {
       }
 
       if (socketIoRoom.players.length === 2) {
-        console.log('two players')
         // EMIT To ROOM:: Game starts
         io.in('ROOM' + room).emit('start',
           // Array of players
-          io.sockets.adapter.rooms['ROOM' + room].players,
+          socketIoRoom.players,
           // Player who starts
-          io.sockets.adapter.rooms['ROOM' + room].players[Math.round(Math.random())])
+          socketIoRoom.players[Math.round(Math.random())])
       }
 
       // EMIT :: Room number
       socket.emit('roomNumber', Object.keys(io.sockets.adapter.rooms)
         .filter(name => name.includes('ROOM'))
         .indexOf('ROOM' + room))
-    })
 
-    // RECEIVE :: Client leaving a Socket.io Room
-    socket.on('leave', function (room, pseudo) {
-      // Only remove from Online variable
-      if (io.sockets.adapter.rooms['ROOM' + room]) {
-        let index = io.sockets.adapter.rooms['ROOM' + room].online.indexOf(pseudo)
-        if (index !== -1) {
-          io.sockets.adapter.rooms['ROOM' + room].online.splice(index, 1)
+      // RECEIVE :: Client leaving a Socket.io Room
+      socket.on('leave', function (room, pseudo) {
+        // Only remove from Online variable
+        if (io.sockets.adapter.rooms['ROOM' + room]) {
+          let index = io.sockets.adapter.rooms['ROOM' + room].online.indexOf(pseudo)
+          if (index !== -1) {
+            io.sockets.adapter.rooms['ROOM' + room].online.splice(index, 1)
+          }
         }
-      }
+        // Client leaves the Room
+        socket.leave('ROOM' + room)
+      })
 
-      // Client leaves the Room
-      socket.leave('ROOM' + room)
-    })
+      // RECEIVE :: Client making a move on the board
+      socket.on('move', function (room, item, pseudo) {
+        // EMIT :: Player's move to other clients in the room
+        socket.to('ROOM' + room).emit('move', item)
 
-    // RECEIVE :: Client making a move on the board
-    socket.on('move', function (room, item) {
-      socket.to('ROOM' + room).emit('move', item)
+        // Add move in the Board
+        logic.fillBoard(socketIoRoom.board, (item + 7 * 3) / 7, pseudo)
+
+        // Check for winner
+        if (logic.hasWon(socketIoRoom.board, pseudo)) {
+          // EMIT To ROOM:: A Player won the game
+          io.in('ROOM' + room).emit('won', pseudo)
+        }
+      })
     })
 
     // RECEIVE :: Client asking for the List of Rooms as spectator
@@ -100,43 +109,9 @@ module.exports = function (server, session) {
 
     // RECEIVE :: Client disconnecting from Socket.io
     socket.on('disconnect', function (socket) {
+      console.log('client disconnected')
     })
   })
 
   return socket
 }
-
-// module.exports = function (int player) {
-
-//   // horizontalCheck
-//   for (int j = 0; j < getHeight() - 3 ; j++ ) {
-//     for (int i = 0; i < getWidth(); i++) {
-//       if (this.board[i][j] == player && this.board[i][j + 1] == player && this.board[i][j + 2] == player && this.board[i][j + 3] == player) {
-//         return true;
-//       }
-//     }
-//   }
-//   // verticalCheck
-//   for (int i = 0; i < getWidth() - 3 ; i++ ) {
-//     for (int j = 0; j < this.getHeight(); j++) {
-//       if (this.board[i][j] == player && this.board[i + 1][j] == player && this.board[i + 2][j] == player && this.board[i + 3][j] == player) {
-//         return true;
-//       }
-//     }
-//   }
-//   // ascendingDiagonalCheck
-//   for (int i = 3; i < getWidth(); i++) {
-//     for (int j = 0; j < getHeight() - 3; j++) {
-//       if (this.board[i][j] == player && this.board[i - 1][j + 1] == player && this.board[i - 2][j + 2] == player && this.board[i - 3][j + 3] == player)
-//         return true;
-//     }
-//   }
-//   // descendingDiagonalCheck
-//   for (int i = 3; i < getWidth(); i++) {
-//     for (int j = 3; j < getHeight(); j++) {
-//       if (this.board[i][j] == player && this.board[i - 1][j - 1] == player && this.board[i - 2][j - 2] == player && this.board[i - 3][j - 3] == player)
-//         return true;
-//     }
-//   }
-//   return false;
-// }

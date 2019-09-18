@@ -1,5 +1,6 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-This project uses [Three.js](https://threejs.org/) :: a JavaScript 3D library. 
+This project uses [Three.js](https://threejs.org/) :: a JavaScript 3D library. <br>
+Live example at : (https://connect-four-3d.herokuapp.com/)
 
 ## Available Scripts
 

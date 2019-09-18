@@ -14,6 +14,11 @@ class Home extends Component {
     this.props.history.push("/watch");
   }
 
+  // Handle Ladder's button
+  handleLadder = event => {
+    this.props.history.push("/ladder");
+  }
+
   render () {
     return (
       < div className='box' >
@@ -21,7 +26,7 @@ class Home extends Component {
           <h1>Connect 4</h1>
           <button type='submit' onClick={this.handlePlay}>Play</button>
           <button type='submit' onClick={this.handleWatch}>Watch</button>
-          <button type='submit'>Ladder</button>
+          <button type='submit' onClick={this.handleLadder}>Ladder</button>
         </div>
       </div >
     )

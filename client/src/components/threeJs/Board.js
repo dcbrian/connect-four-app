@@ -1,9 +1,9 @@
 import { TweenMax, TimelineMax, Expo } from "gsap/TweenMax"
 import React, { Fragment, Component } from 'react'
 import * as THREE from 'three'
-import '../index.css'
+import '../../index.css'
 
-class Three extends Component {
+class Board extends Component {
   componentDidMount () {
     const width = this.mount.clientWidth
     const height = this.mount.clientHeight
@@ -15,14 +15,13 @@ class Three extends Component {
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer({ antialias: true })
-    const geometry = new THREE.BoxGeometry(1, 1, 1)
-    const material = new THREE.MeshBasicMaterial({ color: 0xff00ff })
-    const cube = new THREE.Mesh(geometry, material)
 
     // Text Geometry
     let loader = new THREE.FontLoader()
+    let matWin = new THREE.MeshPhysicalMaterial({ color: 0xe8e8e8, emissive: 0x490000, flatShading: true })
     let textMat = new THREE.MeshPhysicalMaterial({ color: 0xe8e8e8, emissive: 0x490000, flatShading: true })
     loader.load('./font.json', (font) => {
+      this.font = font
       let textGeo = new THREE.TextGeometry("Wait for your opponent", {
         font: font,
         size: 2.5,
@@ -84,7 +83,6 @@ class Three extends Component {
     // camera.position.z = 4
     camera.position.set(0, 5, 80)
 
-    // scene.add(cube)
     renderer.setClearColor('#e5e5e5')
     renderer.setSize(width, height)
 
@@ -93,16 +91,16 @@ class Three extends Component {
     this.scene = scene
     this.camera = camera
     this.renderer = renderer
-    this.material = material
     this.raycaster = raycaster
     this.mouse = mouse
-    this.cube = cube
     this.cones = cones
+    this.matWin = matWin
     this.textMat = textMat
     this.coinPlayerMaterial = coinPlayerMaterial
     this.coinMaterial = coinMaterial
     this.combinedGeometry = combinedGeometry
     this.turn = this.props.turn
+    this.won = false
     this.matrix = new THREE.Matrix4()
     this.rotation = 180
 
@@ -123,6 +121,34 @@ class Three extends Component {
       // Make text invisible
       this.textMat.transparent = true
       TweenMax.to(this.textMat, 0.5, { opacity: 0 })
+    })
+
+    // RECEIVE :: Room number
+    this.socket.on('won', res => {
+      this.won = true
+      // Make text invisible
+      this.turn = true
+      this.textMat.transparent = true
+      TweenMax.to(this.textMat, 0.5, { opacity: 0 })
+
+      // Wait for turn Animation to finish
+      setTimeout(() => {
+        let textWin = new THREE.TextGeometry(res + " won the game !", {
+          font: this.font,
+          size: 2.5,
+          height: 0.8,
+          curveSegments: 10,
+          bevelThickness: 0.5,
+          bevelSize: 0.3,
+          bevelEnabled: true
+        })
+        textWin.rotateY(Math.PI)
+        textWin.center(textWin)
+        let textMesh = new THREE.Mesh(textWin, this.matWin)
+        textMesh.position.set(0, 0, 0)
+
+        this.scene.add(textMesh)
+      }, 1000)
     })
 
     this.mount.appendChild(this.renderer.domElement)
@@ -162,8 +188,6 @@ class Three extends Component {
     // Fall animation
     this.tl = new TimelineMax()
 
-    // this.tl.to(intersects[i].object.scale, 1, { x: 2, ease: Expo.easeOut })
-    // this.tl.to(intersects[i].object.scale, .5, { x: .5, ease: Expo.easeOut })
     this.tl.to(mesh.position, 1, { y: -32 + 6.5 * this.board[x / 7], ease: Expo.easeOut })
     this.tl.to(mesh.rotation, 1.5, { y: Math.PI, ease: Expo.easeOut }, "=-.6")
 
@@ -171,7 +195,7 @@ class Three extends Component {
   }
 
   onMouseMove = (event) => {
-    if (!this.turn || this.rotation < 180) return
+    if (!this.turn || this.rotation < 180 || this.won) return
     event.preventDefault()
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
@@ -188,7 +212,7 @@ class Three extends Component {
       this.addCoin(position.x, true)
 
       // EMIT :: List of Rooms
-      this.socket.emit('move', this.props.game, position.x)
+      this.socket.emit('move', this.props.game, position.x, this.props.pseudo)
       this.turn = false
     }
   }
@@ -232,4 +256,4 @@ class Three extends Component {
   }
 }
 
-export default Three
+export default Board
